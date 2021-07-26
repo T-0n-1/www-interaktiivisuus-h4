@@ -1,13 +1,13 @@
-// Your web app's Firebase configuration
 var firebaseConfig = {
-    apiKey: "AIzaSyCK-oEkblmjffu2EwNhCgg9RaDe_M7vuo0",
-    authDomain: "d3-firebase-b6302.firebaseapp.com",
-    databaseURL: "https://d3-firebase-b6302.firebaseio.com",
-    projectId: "d3-firebase-b6302",
-    storageBucket: "d3-firebase-b6302.appspot.com",
-    messagingSenderId: "909602705698",
-    appId: "1:909602705698:web:82797a8d555d5260"
+    apiKey: "AIzaSyAez3V_PmzNIZPOXFfFu5ohhS5uLEihoTY",
+    authDomain: "d3-firebase-f4abb.firebaseapp.com",
+    projectId: "d3-firebase-f4abb",
+    storageBucket: "d3-firebase-f4abb.appspot.com",
+    messagingSenderId: "847650465829",
+    appId: "1:847650465829:web:7a3a15d76389725f8e37cc",
+    measurementId: "G-R098451P0B"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 const db = firebase.firestore()

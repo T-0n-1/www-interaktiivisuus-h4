@@ -19,15 +19,14 @@ const graph = svg.append("g")
 const xAxisGroup = graph.append("g")
 const yAxisGroup = graph.append("g")
 
-//d3.json("js/dogsinfi.json").then(
 db.collection("dogsinfi").get().then(response => {
     var data = []
 
     response.docs.forEach(doc => {
         data.push(doc.data())
     })
+    data.sort((a, b) => parseFloat(b.count) - parseFloat(a.count));
 
-//    data => {
 const scaleY = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.count)])
     .range([graphHeight, 0])
