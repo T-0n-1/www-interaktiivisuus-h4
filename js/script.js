@@ -26,24 +26,10 @@ db.collection("dogsinfi").onSnapshot(response => {
             ...change.doc.data(),
             id: change.doc.id
         }
-        switch (change.type) {
-            case "added":
-                data.push(doc)
-                break
-            case "modified":
-                var index = data.findIndex(item => item.id == doc.id)
-                data[index] = doc
-                break
-            case "removed":
-                data = data.filter(item => item.id !== doc.id)
-                break
-            default:
-                break
-        }
+        var index = data.findIndex(item => item.id == doc.id)   // TÄMÄ ON OMA KOODINI
+        change.type == 'added' ? data.push(doc) : (change.type == 'modified' ? data[index] = doc : data = data.filter(item => item.id !== doc.id))
     })
     data.sort((a, b) => parseFloat(b.count) - parseFloat(a.count))
-    
-    // update(data)   EI TOIMI ?!?!?!?
 
     const scaleY = d3.scaleLinear()
         .domain([0, d3.max(data, d => d.count)])
