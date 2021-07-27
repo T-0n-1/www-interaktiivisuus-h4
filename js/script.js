@@ -19,53 +19,73 @@ const graph = svg.append("g")
 const xAxisGroup = graph.append("g")
 const yAxisGroup = graph.append("g")
 
-db.collection("dogsinfi").get().then(response => {
-    var data = []
-
-    response.docs.forEach(doc => {
-        data.push(doc.data())
+var data = []
+db.collection("dogsinfi").onSnapshot(response => {
+    response.docChanges().forEach(change => {
+        var doc = {
+            ...change.doc.data(),
+            id: change.doc.id
+        }
+        switch (change.type) {
+            case "added":
+                data.push(doc)
+                break
+            case "modified":
+                var index = data.findIndex(item => item.id == doc.id)
+                data[index] = doc
+                break
+            case "removed":
+                data = data.filter(item => item.id !== doc.id)
+                break
+            default:
+                break
+        }
     })
-    data.sort((a, b) => parseFloat(b.count) - parseFloat(a.count));
+    data.sort((a, b) => parseFloat(b.count) - parseFloat(a.count))
+    
+    // update(data)   EI TOIMI ?!?!?!?
 
-const scaleY = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.count)])
-    .range([graphHeight, 0])
+    const scaleY = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.count)])
+        .range([graphHeight, 0])
 
-const scaleX = d3.scaleBand()
-    .domain(data.map(item => item.breed))
-    .range([0, graphWidth])
-    .paddingInner(0.1)
+    const scaleX = d3.scaleBand()
+        .domain(data.map(item => item.breed))
+        .range([0, graphWidth])
+        .paddingInner(0.1)
 
-const rects = graph.selectAll("rect")
-    .data(data)
-    .attr("width", scaleX.bandwidth)
-    .attr("height", d => graphHeight - scaleY(d.count))
-    .attr("fill", "red")
-    .attr("x", d => scaleX(d.breed))
-    .attr("y", d => scaleY(d.count))
+    const rects = graph.selectAll("rect")
+        .data(data)
+        .attr("width", scaleX.bandwidth)
+        .attr("height", d => graphHeight - scaleY(d.count))
+        .attr("fill", "red")
+        .attr("x", d => scaleX(d.breed))
+        .attr("y", d => scaleY(d.count))
 
-rects.enter()
-    .append("rect")
-    .attr("width", scaleX.bandwidth)
-    .attr("height", d => graphHeight - scaleY(d.count))
-    .attr("fill", "red")
-    .attr("x", d => scaleX(d.breed))
-    .attr("y", d => scaleY(d.count))
+    rects.exit().remove()
 
-const x_axis = d3.axisBottom()
-    .scale(scaleX)
+    rects.enter()
+        .append("rect")
+        .attr("width", scaleX.bandwidth)
+        .attr("height", d => graphHeight - scaleY(d.count))
+        .attr("fill", "red")
+        .attr("x", d => scaleX(d.breed))
+        .attr("y", d => scaleY(d.count))
 
-const y_axis = d3.axisLeft()
-    .scale(scaleY)
-    .ticks(5)
-    .tickFormat(d => d + " yksilöä")
+    const x_axis = d3.axisBottom()
+        .scale(scaleX)
 
-xAxisGroup.call(x_axis)
-    .attr("transform", `translate(0, ${graphHeight})`)
-yAxisGroup.call(y_axis)
+    const y_axis = d3.axisLeft()
+        .scale(scaleY)
+        .ticks(5)
+        .tickFormat(d => d + " yksilöä")
 
-xAxisGroup.selectAll("text")
-    .attr("transform", `translate(0, 10) rotate(90)`)
-    .attr("text-anchor", `start`)
+    xAxisGroup.call(x_axis)
+        .attr("transform", `translate(0, ${graphHeight})`)
+    yAxisGroup.call(y_axis)
+
+    xAxisGroup.selectAll("text")
+        .attr("transform", `translate(0, 10) rotate(90)`)
+        .attr("text-anchor", `start`)
 
 })
