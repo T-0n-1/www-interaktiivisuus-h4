@@ -26,7 +26,7 @@ db.collection("dogsinfi").onSnapshot(response => {
             ...change.doc.data(),
             id: change.doc.id
         }
-        var index = data.findIndex(item => item.id == doc.id)   // TÄMÄ ON OMA KOODINI
+        var index = data.findIndex(item => item.id == doc.id)   // Using ternary operator instead of switch-case
         change.type == 'added' ? data.push(doc) : (change.type == 'modified' ? data[index] = doc : data = data.filter(item => item.id !== doc.id))
     })
     data.sort((a, b) => parseFloat(b.count) - parseFloat(a.count))
