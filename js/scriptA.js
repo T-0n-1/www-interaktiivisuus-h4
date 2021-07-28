@@ -1,11 +1,18 @@
+function translate(value) {
+    valueSplitted = value.split(',')
+    valueJoined = valueSplitted.join(".")
+    valueTranslated = Number(valueJoined)
+    return valueTranslated
+}
+
 let width = (document.documentElement.clientWidth)*3
 let height = document.documentElement.clientHeight
 let spaceForButtons = 40
 
 const svg = d3.select(".canvas")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height - spaceForButtons)
+.append("svg")
+.attr("width", width)
+.attr("height", height - spaceForButtons)
 
 const margin = {
     top: 20,
@@ -29,7 +36,16 @@ d3.json("js/measures.json").then(
         var measureArray = []
         for (k in data) {
             object = data[k].Measures
-            measureArray.push(object)
+            for (key in object) {
+                if (key == 'AirPressure') {
+                    object[key] = translate(object[key])
+                } else if (key == 'Temp') {
+                    object[key] = translate(object[key])
+                } else if (key == 'Humidity') {
+                    object[key] = translate(object[key])
+                } else { object[key] = object[key] }
+            }
+        measureArray.push(object)
         }
         
         // Konsoliloki säästetty tehtävän annon vuoksi
@@ -53,7 +69,7 @@ d3.json("js/measures.json").then(
         console.log(HumidityMin)
 
         const scaleY = d3.scaleLinear()
-            .domain([AirPressureMin, AirPressureMax])
+            .domain([(AirPressureMin-0.1), AirPressureMax])
             .range([graphHeight, 0])
 
 
