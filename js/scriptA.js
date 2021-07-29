@@ -53,12 +53,12 @@ d3.json("js/measures.json").then(
         
         data = measureArray
 
-        var AirPressureMin = d3.min(data, d => parseFloat(d.AirPressure))
-        var AirPressureMax = d3.max(data, d => parseFloat(d.AirPressure))
-        var TempMin = d3.min(data, d => parseFloat(d.Temp))
-        var TempMax = d3.max(data, d => parseFloat(d.Temp))
-        var HumidityMin = d3.min(data, d => parseFloat(d.Humidity))
-        var HumidityMax = d3.max(data, d => parseFloat(d.Humidity))
+        var AirPressureMin = d3.min(data, d => d.AirPressure)
+        var AirPressureMax = d3.max(data, d => d.AirPressure)
+        var TempMin = d3.min(data, d => d.Temp)
+        var TempMax = d3.max(data, d => d.Temp)
+        var HumidityMin = d3.min(data, d => d.Humidity)
+        var HumidityMax = d3.max(data, d => d.Humidity)
 
         // Konsolilokit säästetty tehtävän annon vuoksi
         console.log(AirPressureMax)
@@ -81,18 +81,18 @@ d3.json("js/measures.json").then(
         const rects = graph.selectAll("rect")
             .data(data)
             .attr("width", scaleX.bandwidth)
-            .attr("height", d => graphHeight - scaleY(parseFloat(d.AirPressure)))
-            .attr("fill", "red")
+            .attr("height", d => graphHeight - scaleY(d.AirPressure))
+            .attr("fill", d => d.AirPressure == AirPressureMax ? "red" : (d.AirPressure == AirPressureMin ? "blue" : "green"))
             .attr("x", d => scaleX(d.Timestamp))
-            .attr("y", d => scaleY(`d.${measure}`))
+            .attr("y", d => scaleY(d.AirPressure))
 
         rects.enter()
             .append("rect")
             .attr("width", scaleX.bandwidth)
-            .attr("height", d => graphHeight - scaleY(parseFloat(d.AirPressure)))
-            .attr("fill", "red")
+            .attr("height", d => graphHeight - scaleY(d.AirPressure))
+            .attr("fill", d => d.AirPressure == AirPressureMax ? "red" : (d.AirPressure == AirPressureMin ? "blue" : "green"))
             .attr("x", d => scaleX(d.Timestamp))
-            .attr("y", d => scaleY(parseFloat(d.AirPressure)))
+            .attr("y", d => scaleY(d.AirPressure))
 
         const x_axis = d3.axisBottom()
             .scale(scaleX)
